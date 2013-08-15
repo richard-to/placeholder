@@ -36,11 +36,16 @@ __cssClass (optional)__
 If you have a gradient background or an image background, you best option is to apply a specific class with just the
 background styles you want.
 
-___override__
+__override__
 
 Default override value is `false`. A function can also be passed in that returns true or false.
 Right now it is kind of pointless since it will be evaluated once before the placeholders are added
 to the inputs/textareas.
+
+__repaint__
+
+Defaults to `false`. Repaint will adjust the label size if you have a textarea that expands
+on focus and shrinks on blur.
 
 ## Usage Examples
 
@@ -53,7 +58,8 @@ Usage with options usage:
     $('input, textarea').placeholder({
     	fontColor: '#000',
     	cssClass: 'input-bg-gradient',
-    	override: true
+    	override: true,
+        repaint: true
     });
 
 Usage with IE10 only override function (granted this example doesn't make much sense):
