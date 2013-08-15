@@ -47,6 +47,16 @@ __repaint__
 Defaults to `false`. Repaint will adjust the label size if you have a textarea that expands
 on focus and shrinks on blur.
 
+
+## Plugin Methods
+
+When the placeholder function is called, an object will be returned. The following methods are available
+
+__forceRepaint__
+
+When called, all the placeholder elements will be repainted (height, width, left, top, line height). There will also be a check
+to see if the placeholder text should show up or not. This is helpful for items that are hidden and subsequently made visible.
+
 ## Usage Examples
 
 Basic usage:
@@ -74,4 +84,11 @@ Usage with IE10 only override function (granted this example doesn't make much s
                 return false;
             }
         }
+    });
+
+Usage with force repaint:
+
+    var $placeholder = $('input').placeholder();
+    $('.hidden-element').fadeIn(function() {
+            $placeholder.forceRepaint();
     });
