@@ -1,4 +1,5 @@
 (function($) {
+
     $.fn.placeholder = function(options) {
         var settings = $.extend({
             fontColor: '#A9A9A9',
@@ -12,6 +13,7 @@
             settings.override = settings.override();
         }
 
+        var elements = [];
         this.each(function() {
             if (!('placeholder' in this) || settings.override) {
 
@@ -24,16 +26,14 @@
                     var $el = $(this);
                     $el.wrap('<span style="position:relative"></span>');
 
-                    var px = 'px';
-
                     var $placeholder = $('<label></label>');
                     $placeholder.attr('for', this.name)
                         .css('color', settings.fontColor)
                         .css('width',  $el.css('width'))
                         .css('height', $el.css('height'))
                         .css('lineHeight', $el.css('lineHeight'))
-                        .css('left', $el.position().left + px)
-                        .css('top', $el.position().top + px)
+                        .css('left', $el.position().left + 'px')
+                        .css('top', $el.position().top + 'px')
                         .css('position', 'absolute')
                         .css('border', 'none')
                         .css('fontSize', $el.css('fontSize'))
@@ -65,33 +65,49 @@
                     $el.parent().prepend($placeholder);
 
                     if (settings.repaint) {
-                        $el.focus(repaint);
-                        $el.blur(repaint);
+                        $el.bind('blur focus', function() {
+                            repaint($el, $placeholder);
+                        });
                     }
 
-                    $el.focus(checkPlaceholderState);
-                    $el.blur(checkPlaceholderState);
+                    $el.bind('blur keypress keyup', function() {
+                        checkPlaceholderState($el, $placeholder, placeholderValue);
+                    });
 
-                    $el.keyup(checkPlaceholderState);
+                    checkPlaceholderState($el, $placeholder, placeholderValue);
 
-                    checkPlaceholderState();
-
-                    function repaint() {
-                        $placeholder.css('width', $el.css('width'))
-                            .css('height', $el.css('height'))
-                            .css('left', $el.position().left + px)
-                            .css('top', $el.position().top + px);
-                    }
-
-                    function checkPlaceholderState() {
-                        if ($el.val() !== '') {
-                            $placeholder.text('');
-                        } else {
-                            $placeholder.text(placeholderValue);
-                        }
-                    }
+                    elements.push({
+                        $el: $el,
+                        $placeholder: $placeholder,
+                        placeholderValue: placeholderValue
+                    });
                 }
             }
         });
+
+        return {
+            forceRepaint: function() {
+                $.each(elements, function(key, val) {
+                    repaint(val.$el, val.$placeholder);
+                    checkPlaceholderState(val.$el, val.$placeholder, val.placeholderValue);
+                });
+            }
+        }
+
+        function checkPlaceholderState($el, $placeholder, placeholderValue) {
+            if ($el.val() !== '') {
+                $placeholder.text('');
+            } else {
+                $placeholder.text(placeholderValue);
+            }
+        }
+
+        function repaint($el, $placeholder) {
+            $placeholder.css('width', $el.css('width'))
+                .css('height', $el.css('height'))
+                .css('lineHeight', $el.css('lineHeight'))
+                .css('left', $el.position().left + 'px')
+                .css('top', $el.position().top + 'px');
+        }
     };
 }(jQuery));
