@@ -86,10 +86,14 @@
         });
 
         return {
+            forceCheckPlaceholderState: function() {
+                $.each(elements, function(key, val) {
+                    checkPlaceholderState(val.$el, val.$placeholder, val.placeholderValue);
+                });
+            },
             forceRepaint: function() {
                 $.each(elements, function(key, val) {
                     repaint(val.$el, val.$placeholder);
-                    checkPlaceholderState(val.$el, val.$placeholder, val.placeholderValue);
                 });
             }
         }
