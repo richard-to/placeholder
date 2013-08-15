@@ -4,14 +4,15 @@
             fontColor: '#A9A9A9',
             bgColor: '',
             cssClass: '',
-            override: false
+            override: false,
+            repaint: false
         }, options);
 
         if (typeof(settings.override) === 'function') {
             settings.override = settings.override();
         }
 
-        return this.each(function() {
+        this.each(function() {
             if (!('placeholder' in this) || settings.override) {
 
                 var placeholderValue = $(this).attr('placeholder') || $(this).attr('data-placeholder');
@@ -20,16 +21,10 @@
                         $(this).removeAttr('placeholder');
                         $(this).attr('data-placeholder', placeholderValue);
                     }
-
                     var $el = $(this);
                     $el.wrap('<span style="position:relative"></span>');
 
                     var px = 'px';
-
-                    var width = $el.width();
-                    var height = $el.height();
-                    var x = $el.position().left;
-                    var y = $el.position().top;
 
                     var $placeholder = $('<label></label>');
                     $placeholder.attr('for', this.name)
@@ -37,8 +32,8 @@
                         .css('width',  $el.css('width'))
                         .css('height', $el.css('height'))
                         .css('lineHeight', $el.css('lineHeight'))
-                        .css('left', x + px)
-                        .css('top', y + px)
+                        .css('left', $el.position().left + px)
+                        .css('top', $el.position().top + px)
                         .css('position', 'absolute')
                         .css('border', 'none')
                         .css('fontSize', $el.css('fontSize'))
@@ -69,11 +64,24 @@
 
                     $el.parent().prepend($placeholder);
 
+                    if (settings.repaint) {
+                        $el.focus(repaint);
+                        $el.blur(repaint);
+                    }
+
+                    $el.focus(checkPlaceholderState);
                     $el.blur(checkPlaceholderState);
 
                     $el.keyup(checkPlaceholderState);
 
                     checkPlaceholderState();
+
+                    function repaint() {
+                        $placeholder.css('width', $el.css('width'))
+                            .css('height', $el.css('height'))
+                            .css('left', $el.position().left + px)
+                            .css('top', $el.position().top + px);
+                    }
 
                     function checkPlaceholderState() {
                         if ($el.val() !== '') {
