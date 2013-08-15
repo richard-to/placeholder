@@ -27,8 +27,7 @@
                     $el.wrap('<span style="position:relative"></span>');
 
                     var $placeholder = $('<label></label>');
-                    $placeholder.attr('for', this.name)
-                        .css('color', settings.fontColor)
+                    $placeholder.css('color', settings.fontColor)
                         .css('width',  $el.css('width'))
                         .css('height', $el.css('height'))
                         .css('lineHeight', $el.css('lineHeight'))
@@ -70,6 +69,13 @@
                         });
                     }
 
+                    if (this.name) {
+                        $placeholder.attr('for', this.name);
+                    } else {
+                        $placeholder.click(function() {
+                            $el.focus();
+                        });
+                    }
                     $el.bind('blur keypress keyup', function() {
                         checkPlaceholderState($el, $placeholder, placeholderValue);
                     });
